@@ -1,0 +1,55 @@
+version: 2.1
+general:
+  branches:
+    only:
+      - master
+
+jobs:
+  deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - setup_remote_docker:
+          version: 20.10.14
+      - checkout
+      - run:
+          name: Deploy to ECS
+          command: |
+            sudo apt update -y
+            sudo apt install awscli -y
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/c9a0a1j0aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/c9a0a1j0
+            docker build -t public.ecr.aws/c9a0a1j0/general-repo/react-app:success .
+            docker push public.ecr.aws/c9a0a1j0/general-repo/react-app:latest
+            aws ecs update-service --cluster demo --service demo --force-new-deployment --region us-east-1
+workflows:
+  version: 2
+  deploy_api:
+    jobs:
+      - deployversion: 2.1
+general:
+  branches:
+    only:
+      - master
+
+jobs:
+  deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - setup_remote_docker:
+          version: 20.10.14
+      - checkout
+      - run:
+          name: Deploy to ECS
+          command: |
+            sudo apt update -y
+            sudo apt install awscli -y
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/c9a0a1j0aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/c9a0a1j0
+            docker build -t public.ecr.aws/c9a0a1j0/general-repo/react-app:success .
+            docker push public.ecr.aws/c9a0a1j0/general-repo/react-app:latest
+            aws ecs update-service --cluster demo --service demo --force-new-deployment --region us-east-1
+workflows:
+  version: 2
+  deploy_api:
+    jobs:
+      - deploy
