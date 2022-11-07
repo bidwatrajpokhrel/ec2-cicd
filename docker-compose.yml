@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  my-react-app:
+    build:
+      context: .
+    volumes:
+      - .:/my-react-app
+    ports:
+      - 3002:3000
+    image: my-react-app:react-app
+    container_name: react-app-container
+    command: npm start
