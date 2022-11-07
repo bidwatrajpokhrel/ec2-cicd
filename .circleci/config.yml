@@ -1,11 +1,11 @@
-version: 2.1
+version: 2
 general:
   branches:
     only:
       - master
 
 jobs:
-  build:
+  deploy:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
@@ -13,19 +13,20 @@ jobs:
           version: 20.10.14
       - checkout
       - run:
-          name: Deploy
+          name: Deploy to ECS
           command: |
             sudo apt update -y
             sudo apt install awscli -y
-            echo start s3 deployment
-            curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             sudo apt-get install nodejs
             npm i
-            npm run build
-            aws s3 sync build s3://mail.bidwat.com
-            echo Deploy end
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/c9a0a1j0
+            docker build -t general-repo/react-app .
+            docker tag general-repo/react-app:latest public.ecr.aws/c9a0a1j0/general-repo/react-app:success
+            docker push public.ecr.aws/c9a0a1j0/general-repo/react-app:success
+            aws ecs update-service --cluster general-cluster --service general-service-1 --force-new-deployment --region us-east-1
 workflows:
   version: 2
-  deploy_ec2:
+  deploy_api:
     jobs:
-      - build
+      - deploy
