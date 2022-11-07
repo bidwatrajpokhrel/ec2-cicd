@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>CLOUDFRONT/S3 CICD - BEFOREEEEEEE</p>
+        <p>CLOUDFRONT/S3 CICD - AFTER!!!!!!!!!!!!!!!!!!!!!</p>
         <a
           className="App-link"
           href="https://reactjs.org"
